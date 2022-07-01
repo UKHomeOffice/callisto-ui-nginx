@@ -1,7 +1,7 @@
 ---
 kind: pipeline
-name: default
-type: docker
+name: callisto-ui-nginx
+type: kubernetes
 
 platform:
   os: linux
@@ -10,7 +10,6 @@ platform:
 environment: 
   SRC_DOCKER_IMAGE: ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway
   VERSION: latest-20220623
-
 
 steps:
 - name: build_image
