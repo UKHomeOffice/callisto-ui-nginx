@@ -22,7 +22,6 @@ steps:
   when:
     event:
     - push
-    - tag
 
 - name: build_tag_ecr
   pull: if-not-exists
