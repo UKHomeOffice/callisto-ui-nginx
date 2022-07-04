@@ -14,8 +14,8 @@ environment:
 
 steps:
 - name: build_image
-  pull: if-not-exists
-  image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
+  pull: if-not-exists  
+  image: quay.io/ukhomeofficedigital/docker-aws-cli
   environment:
     AWS_ACCESS_KEY_ID:
       from_secret: AWS_ACCESS_KEY_ID
