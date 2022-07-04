@@ -22,29 +22,31 @@ steps:
   - docker pull "$${SRC_DOCKER_IMAGE}:$${VERSION}"
   - docker tag "$${SRC_DOCKER_IMAGE}:$${VERSION}" "$${TARGET_DOCKER_IMAGE}:$${VERSION}"
   - docker tag "$${SRC_DOCKER_IMAGE}:$${VERSION}" "$${TARGET_DOCKER_IMAGE}:latest"
+  - docker push "$${TARGET_DOCKER_IMAGE}:$${VERSION}"
+  - docker push "$${TARGET_DOCKER_IMAGE}:latest"
   when:
     event:
     - push
     - tag
 
-- name: build_tag_ecr
-  pull: if-not-exists
-  image: plugins/ecr
-  environment:
-    AWS_REGION: eu-west-2
-  settings:
-    access_key:
-      from_secret: AWS_ACCESS_KEY_ID
-    secret_key:
-      from_secret: AWS_SECRET_ACCESS_KEY
-    repo: callisto/nginx-s3-gateway
-    registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
-    tags:
-    - ${DRONE_TAG}
-    - latest
-  when:
-    event:
-    - tag
+# - name: build_tag_ecr
+#   pull: if-not-exists
+#   image: plugins/ecr
+#   environment:
+#     AWS_REGION: eu-west-2
+#   settings:
+#     access_key:
+#       from_secret: AWS_ACCESS_KEY_ID
+#     secret_key:
+#       from_secret: AWS_SECRET_ACCESS_KEY
+#     repo: callisto/nginx-s3-gateway
+#     registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+#     tags:
+#     - ${DRONE_TAG}
+#     - latest
+#   when:
+#     event:
+#     - tag
 
 # - name: build_push_ecr
 #   pull: if-not-exists
