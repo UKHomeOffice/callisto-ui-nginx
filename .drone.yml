@@ -9,6 +9,7 @@ platform:
 
 environment: 
   SRC_DOCKER_IMAGE: ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway
+  TARGET_DOCKER_IMAGE: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/nginx-s3-gateway
   VERSION: latest-20220623
 
 steps:
@@ -19,9 +20,12 @@ steps:
   # wait for docker service to be up before running docker build
   - n=0; while [ "$n" -lt 60 ] && [ ! "$(docker stats --no-stream)" ]; do n=$(( n + 1 )); sleep 1; done
   - docker pull "$${SRC_DOCKER_IMAGE}:$${VERSION}"
+  - docker tag "$${SRC_DOCKER_IMAGE}:$${VERSION}" "$${TARGET_DOCKER_IMAGE}:$${VERSION}"
+  - docker tag "$${SRC_DOCKER_IMAGE}:$${VERSION}" "$${TARGET_DOCKER_IMAGE}:latest"
   when:
     event:
     - push
+    - tag
 
 - name: build_tag_ecr
   pull: if-not-exists
