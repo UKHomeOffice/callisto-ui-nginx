@@ -1,92 +1,89 @@
-# callisto-ui-nginx
+# Nginx S3 Gateway
 
-Callisto Nginx S3 Gateway container repo
+## Introduction
 
-## Getting started
+This project uses https://github.com/nginxinc/nginx-s3-gateway which proxies requests through to an AWS S3 bucket
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+The Dockerfile pulls the opensource version specified, creates a non root user 1001 and provides owner permissions to the necessary Nginx config files so that these can be overwritten during deployment.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Being able run the image as a non root user was the driver for this project.
 
-## Add your files
+Drone is used to build and deploy the image to a private repository in AWS ECR.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## To build the image
+```
+docker build -t nginx-s3-gateway .
+```
+## To run the image
+1. Create a .settings file and add the environment variables show below with your AWS S3 settings and preferred proxy configuration.
+For more information on the environment variables, see the [official docs](https://github.com/nginxinc/nginx-s3-gateway/blob/master/docs/getting_started.md#configuration)
+```
+S3_BUCKET_NAME=my-bucket-name
+S3_ACCESS_KEY_ID=AWS123POIUYTREWQ
+S3_SECRET_KEY=lkjHgfdsA/mNbvcxz
+S3_SERVER=s3.region.amazonaws.com
+S3_SERVER_PORT=443
+S3_SERVER_PROTO=https
+S3_REGION=region
+S3_STYLE=virtual
+S3_DEBUG=true
+AWS_SIGS_VERSION=4
+ALLOW_DIRECTORY_LIST=false
+PROXY_CACHE_VALID_OK=60m
+PROXY_CACHE_VALID_NOTFOUND=1m
+PROXY_CACHE_VALID_FORBIDDEN=30s
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.digital.homeoffice.gov.uk/callisto/callisto-ui-nginx.git
-git branch -M main
-git push -uf origin main
+
+
+
+2. In order to run the image the default port (80) needs to be overridden in default.conf to a higher port number such as 8080. This can be done by changing [default.conf.template](https://github.com/nginxinc/nginx-s3-gateway/blob/master/common/etc/nginx/templates/default.conf.template) and mounting the new file. 
+```
+server {
+    
+    listen 8080;        
+    ...
+}
+
+```
+3. In addition the default user nginx in [nginx.conf](https://github.com/nginxinc/nginx-s3-gateway/blob/master/common/etc/nginx/nginx.conf) (line 1) can be removed and this file also mounted. 
+
+4. The image can then be run with the mounted files as below or using [volume mounts](https://kubernetes.io/docs/concepts/storage/volumes/) in something like Kubernetes 
+
+```
+docker run -v $(PWD)/default.conf.templates:/etc/nginx/templates/default.conf.templates -v $(PWD)/nginx.conf:/etc/nginx/nginx.conf --env-file ./settings --publish 8080:8080 --name nginx-s3-gateway
 ```
 
-## Integrate with your tools
+## To update the image version
+1. Change the nginx-oss-s3-gateway version in the Dockfile
+```
+FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:latest-20220623
+```
+2. Add the same version to the Drone.yml environment variable
+```
+# Drone.yml
 
-- [ ] [Set up project integrations](https://gitlab.digital.homeoffice.gov.uk/callisto/callisto-ui-nginx/-/settings/integrations)
+environment:
+    VERSION: latest-20220623
+```
+3. Git tag & push using the same version
+```
+# Git commands
 
-## Collaborate with your team
+git tag latest-20220623 
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+git push origin latest-20220623
+```
 
-## Test and Deploy
+When pushing to the Git repository the image will be built by Drone, and when tagging & pushing the image will be deployed to the private AWS ECR repository: callisto/nginx-s3-gateway
 
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+## Additional customisation
+Since you can override the default.conf.template you can make many adjustments to how your application handles the proxying of requests to AWS S3. For example, rather than using the default implementation which reads the URI path in order to construct the AWS S3 bucket URL, this could be read from the host sub-domain using a regular expression. 
+```
+map $host $subdomain {
+    ~^(?<p1>.+)\.[^\.]+\.[^\.]+$ $p1;    
+}
+--
+set $uri_path       "$subdomain/$request_uri";
+```
+Also, since the majority of the [AWS S3 configuration](https://github.com/nginxinc/nginx-s3-gateway/blob/master/common/etc/nginx/include/s3gateway.js) is written in [njs (a version of JavaScript)](https://nginx.org/en/docs/njs/) it too is easily customisable.
