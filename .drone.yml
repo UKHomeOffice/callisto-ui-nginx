@@ -24,7 +24,7 @@ steps:
     event:
     - push
 
-- name: build_tag_ecr
+- name: build_tag_push_ecr
   pull: if-not-exists
   image: plugins/ecr
   environment:
