@@ -1,0 +1,119 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+  labels:
+    app: {{ .Values.appName }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      securityContext: 
+        runAsUser: 1001      
+        runAsGroup: 1001
+      volumes:
+        - name: nginx-templates
+          configMap:
+            name: default-conf
+        - name: nginx-conf
+          configMap:
+            name: default-conf            
+      containers:
+        - name: nginx-s3proxy
+          image: {{ .Values.image.repo }}{{ .Values.image.name }}:{{ .Values.image.version }}
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: nginx-templates  # matches volume name: in this file
+              mountPath: /etc/nginx/templates/default.conf.template
+              subPath: default.conf.template
+            - name: nginx-conf  # matches volume name: in this file
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+          env:
+            - name: S3_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: s3bucketname
+            - name: S3_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: s3accesskeyid
+            - name: S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: s3secretkey
+            - name: S3_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: s3server
+            - name: S3_SERVER_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: s3serverport
+            - name: S3_SERVER_PROTO
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: s3serverproto
+            - name: S3_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: s3region
+            - name: S3_STYLE
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: s3style
+            - name: S3_DEBUG
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: s3debug
+            - name: AWS_SIGS_VERSION
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: awssigsversion
+            - name: ALLOW_DIRECTORY_LIST
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: allowdirectorylist
+            - name: PROXY_CACHE_VALID_OK
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: proxycachevalidok
+            - name: PROXY_CACHE_VALID_NOTFOUND
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: proxycachevalidnotfound
+            - name: PROXY_CACHE_VALID_FORBIDDEN
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: proxycachevalidforbidden
+          resources:
+            requests:
+              memory: '512Mi'
+              cpu: '500m'
+            limits:
+              memory: '1Gi'
+              cpu: '1500m'
+          ports:
+            - name: http
+              containerPort: 80

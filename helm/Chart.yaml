@@ -1,0 +1,6 @@
+apiVersion: v2
+name: callisto-ui-nginx
+description: A Helm chart for deploying the Callisto UI
+type: application
+version: 1.0.0
+appVersion: 1.0.0

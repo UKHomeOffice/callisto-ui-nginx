@@ -1,0 +1,16 @@
+name: callisto-web
+
+service:
+  name: callisto-web
+  port: 3000
+
+replicaCount: 1
+
+image:
+  repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/
+  name: nginx-s3-gateway
+  version: latest
+
+global:
+  ingress:
+    host: web.dev.callisto.homeoffice.gov.uk
