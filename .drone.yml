@@ -13,13 +13,9 @@ environment:
 steps:
 - name: lint_dockerfile
   pull: if-not-exists
-  image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
-  environment:
-    DOCKER_HOST: tcp://docker:2375
+  image: hadolint/hadolint:latest-alpine
   commands:
-  # wait for docker service to be up before running docker build
-  - n=0; while [ "$n" -lt 60 ] && [ ! "$(docker stats --no-stream)" ]; do n=$(( n + 1 )); sleep 1; done
-  - docker run --rm -i hadolint/hadolint < Dockerfile
+  - hadolint Dockerfile
   when:
     event:
     - push
