@@ -19,7 +19,7 @@ steps:
   when:
     event:
     - push
-    - pull    
+    - pull_request    
 
 - name: build_image
   pull: if-not-exists
