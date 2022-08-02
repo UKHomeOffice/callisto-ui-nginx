@@ -91,4 +91,4 @@ steps:
         from_secret: dev_kube_token
     when:
       event: push
-      #branch: main
+      branch: main
