@@ -81,7 +81,7 @@ server {
     }
 
     location / {
-        set $uri_path       "/$subenv/$branch$request_uri";
+        set $uri_path       "/$subenv/$branch$uri_path";        
         
         auth_request /aws/credentials/retrieve;
 
