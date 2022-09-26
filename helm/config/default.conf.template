@@ -47,7 +47,7 @@ server {
 
     # Uncomment this for a HTTP header that will let you know the cache status
     # of an object.
-    # add_header X-Cache-Status $upstream_cache_status;
+    add_header X-Cache-Status $upstream_cache_status;    
 
     # Proxy caching configuration. Customize this for your needs.
     proxy_cache s3_cache;
