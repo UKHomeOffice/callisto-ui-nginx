@@ -11,9 +11,9 @@ include /etc/nginx/conf.d/gateway/v${AWS_SIGS_VERSION}_js_vars.conf;
 # Extracts only the path from the requested URI. This strips out all query
 # parameters and anchors in order to prevent extranous data from being sent to
 # S3.
-#map $request_uri $uri_path {
-#    "~^(?P<path>.*?)(\?.*)*$"  $path;
-#}
+map $request_uri $uri_path {
+    "~^(?P<path>.*?)(\?.*)*$"  $path;
+}
 
 map $S3_STYLE $s3_host_hdr {
     virtual "${S3_BUCKET_NAME}.${S3_SERVER}";
