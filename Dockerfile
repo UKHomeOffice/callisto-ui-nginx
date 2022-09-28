@@ -1,4 +1,4 @@
-FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:latest-20220623
+FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:latest-20220916
 
 RUN addgroup --system --gid 1001 s3gateway && \
     adduser --system --disabled-login --no-create-home --ingroup s3gateway -uid 1001 gatewayuser && \
