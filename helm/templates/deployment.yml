@@ -107,6 +107,16 @@ spec:
                 secretKeyRef:
                   name: nginxs3proxy
                   key: proxycachevalidforbidden
+            - name: PROVIDE_INDEX_PAGE
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: provideindexpage 
+            - name: APPEND_SLASH_FOR_POSSIBLE_DIRECTORY
+              valueFrom:
+                secretKeyRef:
+                  name: nginxs3proxy
+                  key: appendslashforpossibledirectory                                    
           resources:
             requests:
               memory: '512Mi'
