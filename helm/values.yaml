@@ -14,3 +14,18 @@ image:
 global:
   ingress:
     host: web.dev.callisto.homeoffice.gov.uk
+
+nginxs3proxy:
+  s3server: s3.eu-west-2.amazonaws.com
+  s3serverPort: 443
+  s3serverProto: https
+  s3region: eu-west-2
+  s3style: virtual
+  s3debug: false
+  awsSigsVersion: 4
+  allowDirectoryList: false
+  proxyCacheValidOk: 5m
+  proxyCacheValidNotFound: 1m
+  proxyCacheValidForbidden: 30s
+  provideIndexPage: true
+  appendSlashForPossibleDirectory: false
