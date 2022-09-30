@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project uses https://github.com/nginxinc/nginx-s3-gateway which proxies requests through to an AWS S3 bucket
+This project uses https://github.com/nginxinc/nginx-s3-gateway which proxies requests through to an AWS s3 bucket.
 
 The Dockerfile pulls the opensource version specified, creates a non root user 1001 and provides owner permissions to the necessary Nginx config files so that these can be overwritten during deployment.
 
@@ -10,17 +10,17 @@ Being able run the image as a non root user was the driver for this project.
 
 Drone is used to build and deploy the image to a private repository in AWS ECR.
 
-## To build the image
+## To run the image locally
+1. Build the image
 ```
 docker build -t nginx-s3-gateway .
 ```
-## To run the image
-1. Create a .settings file and add the environment variables show below with your AWS S3 settings and preferred proxy configuration.
-For more information on the environment variables, see the [official docs](https://github.com/nginxinc/nginx-s3-gateway/blob/master/docs/getting_started.md#configuration)
+2. Create a .settings.env file and add the environment variables shown below. 
+
 ```
-S3_BUCKET_NAME=my-bucket-name
-S3_ACCESS_KEY_ID=AWS123POIUYTREWQ
-S3_SECRET_KEY=lkjHgfdsA/mNbvcxz
+S3_BUCKET_NAME=change-to-your-bucket-name
+S3_ACCESS_KEY_ID=change-to-your-access-key
+S3_SECRET_KEY=change-to-your-secret
 S3_SERVER=s3.region.amazonaws.com
 S3_SERVER_PORT=443
 S3_SERVER_PROTO=https
@@ -29,32 +29,35 @@ S3_STYLE=virtual
 S3_DEBUG=true
 AWS_SIGS_VERSION=4
 ALLOW_DIRECTORY_LIST=false
-PROXY_CACHE_VALID_OK=60m
+PROXY_CACHE_VALID_OK=5m
 PROXY_CACHE_VALID_NOTFOUND=1m
 PROXY_CACHE_VALID_FORBIDDEN=30s
 PROVIDE_INDEX_PAGE=true
 APPEND_SLASH_FOR_POSSIBLE_DIRECTORY=false
 
 ```
+> For more information on the environment variables, see the [official docs](https://github.com/nginxinc/nginx-s3-gateway/blob/master/docs/getting_started.md#configuration)
 
+3. Change the `S3_BUCKET_NAME, S3_ACCESS_KEY_ID and S3_SECRET_KEY` values to use your s3 configuration. 
 
-
-2. In order to run the image the default port (80) needs to be overridden in default.conf to a higher port number such as 8080. This can be done by changing [default.conf.template](https://github.com/nginxinc/nginx-s3-gateway/blob/master/common/etc/nginx/templates/default.conf.template) and mounting the new file. 
+4. In `helm/config/default.conf.template` comment out `set $uri_path` and hardcode the path to your s3 bucket. The $subenv and $branch variables usually make up this path when deployed ($subenv is pulled from the URL, $branch is currently hardcoded). When running locally we're always using "localhost" and this information is not available from the URL.
 ```
-server {
+location / {
     
-    listen 8080;        
+    #set $uri_path       "/$subenv/$branch$uri_path";
+    set $uri_path       "/my/path$uri_path";
     ...
 }
 
 ```
-3. In addition the default user nginx in [nginx.conf](https://github.com/nginxinc/nginx-s3-gateway/blob/master/common/etc/nginx/nginx.conf) (line 1) can be removed and this file also mounted. 
 
-4. The image can then be run with the mounted files as below or using [volume mounts](https://kubernetes.io/docs/concepts/storage/volumes/) in something like Kubernetes 
+5. Run the image with the mounted files as below: 
 
 ```
-docker run -v $(PWD)/default.conf.templates:/etc/nginx/templates/default.conf.templates -v $(PWD)/nginx.conf:/etc/nginx/nginx.conf --env-file ./settings --publish 8080:8080 --name nginx-s3-gateway
+docker run -v $(PWD)/default.conf.templates:/etc/nginx/templates/default.conf.templates -v $(PWD)/nginx.conf:/etc/nginx/nginx.conf --env-file ./settings --publish 3000:3000 --name nginx-s3-gateway
 ```
+
+6. Navigate to http://localhost:3000
 
 ## To update the image version
 1. Change the nginx-oss-s3-gateway version in the Dockfile
@@ -80,12 +83,14 @@ git push origin latest-20220623
 When pushing to the Git repository the image will be built by Drone, and when tagging & pushing the image will be deployed to the private AWS ECR repository: callisto/nginx-s3-gateway
 
 ## Additional customisation
-Since you can override the default.conf.template you can make many adjustments to how your application handles the proxying of requests to AWS S3. For example, rather than using the default implementation which reads the URI path in order to construct the AWS S3 bucket URL, this could be read from the host sub-domain using a regular expression. 
+The default implementation of the nginx s3 gateway reads the URI path (http://mywebsite.com/uripath/index.html) and constructs the request to the s3 bucket based on that (https://bucketname.s3.us-east.amazonaws.com/uripath/index.html). This implementation is slightly different in that it reads the path information from the URL (http://subenv.mywebsite.com) using a regular expression:
 ```
-map $host $subdomain {
-    ~^(?<p1>.+)\.[^\.]+\.[^\.]+$ $p1;    
+map $host $subenv {
+    ~^[^.]+\.(?<p2>[^.]+)\.callisto.homeoffice.gov.uk$ $p2;
 }
---
-set $uri_path       "$subdomain/$request_uri";
 ```
-Also, since the majority of the [AWS S3 configuration](https://github.com/nginxinc/nginx-s3-gateway/blob/master/common/etc/nginx/include/s3gateway.js) is written in [njs (a version of JavaScript)](https://nginx.org/en/docs/njs/) it too is easily customisable.
+In the future it will also read the branch (JIRA ticket number) in the same way (http://subenv.branch.mywebsite.com)
+## Useful links
+- [AWS S3 configuration](https://github.com/nginxinc/nginx-s3-gateway/blob/master/common/etc/nginx/include/s3gateway.js) 
+- [njs (a version of JavaScript)](https://nginx.org/en/docs/njs/) 
+- [njs-examples](https://github.com/nginx/njs-examples/)
