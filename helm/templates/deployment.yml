@@ -55,7 +55,7 @@ spec:
             - name: S3_SERVER
               value: {{ .Values.nginxs3proxy.s3server }}
             - name: S3_SERVER_PORT
-              value: {{ .Values.nginxs3proxy.s3serverPort }}
+              value: "{{ .Values.nginxs3proxy.s3serverPort }}"
             - name: S3_SERVER_PROTO
               value: {{ .Values.nginxs3proxy.s3serverProto }}
             - name: S3_REGION
@@ -63,11 +63,11 @@ spec:
             - name: S3_STYLE
               value: {{ .Values.nginxs3proxy.s3style }}
             - name: S3_DEBUG
-              value: {{ .Values.nginxs3proxy.s3debug }}
+              value: "{{ .Values.nginxs3proxy.s3debug }}"
             - name: AWS_SIGS_VERSION
-              value: {{ .Values.nginxs3proxy.awsSigsVersion }}
+              value: "{{ .Values.nginxs3proxy.awsSigsVersion }}"
             - name: ALLOW_DIRECTORY_LIST
-              value: {{ .Values.nginxs3proxy.allowDirectoryList }}
+              value: "{{ .Values.nginxs3proxy.allowDirectoryList }}"
             - name: PROXY_CACHE_VALID_OK
               value: {{ .Values.nginxs3proxy.proxyCacheValidOk }}
             - name: PROXY_CACHE_VALID_NOTFOUND
@@ -75,9 +75,9 @@ spec:
             - name: PROXY_CACHE_VALID_FORBIDDEN
               value: {{ .Values.nginxs3proxy.proxyCacheValidForbidden }}
             - name: PROVIDE_INDEX_PAGE
-              value: {{ .Values.nginxs3proxy.provideIndexPage }} 
+              value: "{{ .Values.nginxs3proxy.provideIndexPage }}"
             - name: APPEND_SLASH_FOR_POSSIBLE_DIRECTORY
-              value: {{ .Values.nginxs3proxy.appendSlashForPossibleDirectory }}                                     
+              value: "{{ .Values.nginxs3proxy.appendSlashForPossibleDirectory }}"
           resources:
             requests:
               memory: '512Mi'
