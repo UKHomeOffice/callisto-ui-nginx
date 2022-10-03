@@ -8,7 +8,7 @@ platform:
   arch: amd64
 
 environment:
-  VERSION: latest-20220623
+  VERSION: latest-20220916
 
 steps:
 - name: lint_dockerfile

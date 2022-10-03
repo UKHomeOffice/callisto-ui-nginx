@@ -53,60 +53,31 @@ spec:
                   name: nginxs3proxy
                   key: s3secretkey
             - name: S3_SERVER
-              valueFrom:
-                secretKeyRef:
-                  name: nginxs3proxy
-                  key: s3server
+              value: {{ .Values.nginxs3proxy.s3server }}
             - name: S3_SERVER_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: nginxs3proxy
-                  key: s3serverport
+              value: "{{ .Values.nginxs3proxy.s3serverPort }}"
             - name: S3_SERVER_PROTO
-              valueFrom:
-                secretKeyRef:
-                  name: nginxs3proxy
-                  key: s3serverproto
+              value: {{ .Values.nginxs3proxy.s3serverProto }}
             - name: S3_REGION
-              valueFrom:
-                secretKeyRef:
-                  name: nginxs3proxy
-                  key: s3region
+              value: {{ .Values.nginxs3proxy.s3region }}
             - name: S3_STYLE
-              valueFrom:
-                secretKeyRef:
-                  name: nginxs3proxy
-                  key: s3style
+              value: {{ .Values.nginxs3proxy.s3style }}
             - name: S3_DEBUG
-              valueFrom:
-                secretKeyRef:
-                  name: nginxs3proxy
-                  key: s3debug
+              value: "{{ .Values.nginxs3proxy.s3debug }}"
             - name: AWS_SIGS_VERSION
-              valueFrom:
-                secretKeyRef:
-                  name: nginxs3proxy
-                  key: awssigsversion
+              value: "{{ .Values.nginxs3proxy.awsSigsVersion }}"
             - name: ALLOW_DIRECTORY_LIST
-              valueFrom:
-                secretKeyRef:
-                  name: nginxs3proxy
-                  key: allowdirectorylist
+              value: "{{ .Values.nginxs3proxy.allowDirectoryList }}"
             - name: PROXY_CACHE_VALID_OK
-              valueFrom:
-                secretKeyRef:
-                  name: nginxs3proxy
-                  key: proxycachevalidok
+              value: {{ .Values.nginxs3proxy.proxyCacheValidOk }}
             - name: PROXY_CACHE_VALID_NOTFOUND
-              valueFrom:
-                secretKeyRef:
-                  name: nginxs3proxy
-                  key: proxycachevalidnotfound
+              value: {{ .Values.nginxs3proxy.proxyCacheValidNotFound }}
             - name: PROXY_CACHE_VALID_FORBIDDEN
-              valueFrom:
-                secretKeyRef:
-                  name: nginxs3proxy
-                  key: proxycachevalidforbidden
+              value: {{ .Values.nginxs3proxy.proxyCacheValidForbidden }}
+            - name: PROVIDE_INDEX_PAGE
+              value: "{{ .Values.nginxs3proxy.provideIndexPage }}"
+            - name: APPEND_SLASH_FOR_POSSIBLE_DIRECTORY
+              value: "{{ .Values.nginxs3proxy.appendSlashForPossibleDirectory }}"
           resources:
             requests:
               memory: '512Mi'
