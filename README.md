@@ -86,7 +86,7 @@ When pushing to the Git repository the image will be built by Drone, and when ta
 The default implementation of the nginx s3 gateway reads the URI path (http://mywebsite.com/uripath/index.html) and constructs the request to the s3 bucket based on that (https://bucketname.s3.us-east.amazonaws.com/uripath/index.html). This implementation is slightly different in that it reads the path information from the URL (http://subenv.mywebsite.com) using a regular expression:
 ```
 map $host $subenv {
-    ~^[^.]+\.(?<p2>[^.]+)\.callisto.homeoffice.gov.uk$ $p2;
+    ~^[^.]+\.(?<p2>[^.]+)\.callisto(?:-notprod)?.homeoffice.gov.uk$ $p2;
 }
 ```
 In the future it will also read the branch (JIRA ticket number) in the same way (http://subenv.branch.mywebsite.com)
