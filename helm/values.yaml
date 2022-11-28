@@ -11,10 +11,6 @@ image:
   name: nginx-s3-gateway
   version: latest
 
-global:
-  ingress:
-    host: web.dev.callisto.homeoffice.gov.uk
-
 nginxs3proxy:
   s3server: s3.eu-west-2.amazonaws.com
   s3serverPort: 443
