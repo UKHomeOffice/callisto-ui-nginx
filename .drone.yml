@@ -114,3 +114,10 @@ steps:
         - main
     depends_on:      
       - deploy to dev
+
+  - name: check dev up
+    pull: if-not-exists        
+    image: alpine/curl:3.14
+    commands:    
+    - response=$(curl --write-out '%{http_code}' --silent --output /dev/null https://web.dev.callisto-notprod.homeoffice.gov.uk/health)    
+    - echo $response
