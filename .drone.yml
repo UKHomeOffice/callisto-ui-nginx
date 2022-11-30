@@ -73,8 +73,7 @@ deploy: &deploy
   image: pelotech/drone-helm3
   settings:
     mode: upgrade
-    chart: ./helm
-    values_file: ./helm/values.yaml
+    chart: ./helm    
     release: callisto-ui-nginx
     kube_certificate:
       from_secret: notprod_kube_certificate
@@ -92,6 +91,7 @@ steps:
   - name: deploy to dev
     <<: *deploy
     settings:
+       values_file: ./helm/values/dev-values.yaml
        namespace: callisto-dev
        kube_token:
          from_secret: dev_kube_token
@@ -104,6 +104,7 @@ steps:
   - name: deploy to test
     <<: *deploy
     settings:
+       values_file: ./helm/values/test-values.yaml
        namespace: callisto-test
        kube_token:
          from_secret: test_kube_token
