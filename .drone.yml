@@ -86,7 +86,9 @@ steps:
     settings:
       mode: lint
       chart: ./helm
-      values_file: ./helm/values.yaml
+      values_files: 
+        - ./helm/values/dev-values.yaml
+        - ./helm/values/test-values.yaml
 
   - name: deploy to dev
     <<: *deploy
