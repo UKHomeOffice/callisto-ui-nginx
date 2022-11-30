@@ -118,7 +118,26 @@ steps:
 
   - name: check dev up
     pull: if-not-exists        
-    image: alpine/curl:3.14
+    image: &alpine_curl_image alpine/curl:3.14
     commands:    
-    - response=$(curl --write-out '%{http_code}' --silent --output /dev/null https://web.dev.callisto-notprod.homeoffice.gov.uk/health)    
-    - echo $response
+    - ./scripts/is-url-up.sh https://web.dev.callisto-notprod.homeoffice.gov.uk/health
+    when:
+      event: 
+        - push
+      branch: 
+        - main
+    depends_on:      
+      - deploy to test
+
+  - name: check test up
+    pull: if-not-exists        
+    image: *alpine_curl_image
+    commands:    
+    - ./scripts/is-url-up.sh https://web.test.callisto-notprod.homeoffice.gov.uk/health
+    when:
+      event: 
+        - push
+      branch: 
+        - main
+    depends_on:      
+      - check dev up      
