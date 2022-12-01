@@ -74,7 +74,6 @@ deploy: &deploy
   settings:
     mode: upgrade
     chart: ./helm
-    values_file: ./helm/values.yaml
     release: callisto-ui-nginx
     kube_certificate:
       from_secret: notprod_kube_certificate
@@ -87,11 +86,14 @@ steps:
     settings:
       mode: lint
       chart: ./helm
-      values_file: ./helm/values.yaml
+      values_files: 
+        - ./helm/values/dev-values.yaml
+        - ./helm/values/test-values.yaml
 
   - name: deploy to dev
     <<: *deploy
     settings:
+       values_file: ./helm/values/dev-values.yaml
        namespace: callisto-dev
        kube_token:
          from_secret: dev_kube_token
@@ -101,9 +103,24 @@ steps:
       branch: 
         - main
 
+  - name: check dev up
+    pull: if-not-exists        
+    image: &alpine_curl_image alpine/curl:3.14
+    commands: 
+    - chmod +x ./scripts/is-url-up.sh
+    - ./scripts/is-url-up.sh https://web.dev.callisto-notprod.homeoffice.gov.uk/health
+    when:
+      event: 
+        - push
+      branch: 
+        - main
+    depends_on:      
+      - deploy to dev        
+
   - name: deploy to test
     <<: *deploy
     settings:
+       values_file: ./helm/values/test-values.yaml
        namespace: callisto-test
        kube_token:
          from_secret: test_kube_token
@@ -112,5 +129,18 @@ steps:
         - push
       branch: 
         - main
+    depends_on:
+      - check dev up
+
+  - name: check test up
+    pull: if-not-exists        
+    image: *alpine_curl_image
+    commands:    
+    - ./scripts/is-url-up.sh https://web.test.callisto-notprod.homeoffice.gov.uk/health
+    when:
+      event: 
+        - push
+      branch: 
+        - main
     depends_on:      
-      - deploy to dev
+      - deploy to test      

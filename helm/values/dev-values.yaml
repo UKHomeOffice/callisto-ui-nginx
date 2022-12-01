@@ -25,3 +25,6 @@ nginxs3proxy:
   proxyCacheValidForbidden: 30s
   provideIndexPage: true
   appendSlashForPossibleDirectory: false
+
+env:
+  s3secretRef: ho-callisto-dev-s3

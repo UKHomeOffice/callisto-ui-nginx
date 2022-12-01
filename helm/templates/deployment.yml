@@ -40,18 +40,18 @@ spec:
             - name: S3_BUCKET_NAME
               valueFrom:
                 secretKeyRef:
-                  name: nginxs3proxy
-                  key: s3bucketname
+                  name: {{ .Values.env.s3secretRef }}
+                  key: s3_bucket_name
             - name: S3_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: nginxs3proxy
-                  key: s3accesskeyid
+                  name: {{ .Values.env.s3secretRef }}
+                  key: iam_access_key
             - name: S3_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: nginxs3proxy
-                  key: s3secretkey
+                  name: {{ .Values.env.s3secretRef }}
+                  key: iam_access_secret
             - name: S3_SERVER
               value: {{ .Values.nginxs3proxy.s3server }}
             - name: S3_SERVER_PORT
