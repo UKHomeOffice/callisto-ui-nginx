@@ -103,6 +103,20 @@ steps:
       branch: 
         - main
 
+  - name: check dev up
+    pull: if-not-exists        
+    image: &alpine_curl_image alpine/curl:3.14
+    commands: 
+    - chmod +x ./scripts/is-url-up.sh
+    - ./scripts/is-url-up.sh https://web.dev.callisto-notprod.homeoffice.gov.uk/health
+    when:
+      event: 
+        - push
+      branch: 
+        - main
+    depends_on:      
+      - deploy to dev        
+
   - name: deploy to test
     <<: *deploy
     settings:
@@ -116,21 +130,7 @@ steps:
       branch: 
         - main
     depends_on:
-      - deploy to dev
-
-  - name: check dev up
-    pull: if-not-exists        
-    image: &alpine_curl_image alpine/curl:3.14
-    commands: 
-    - chmod +x ./scripts/is-url-up.sh
-    - ./scripts/is-url-up.sh https://web.dev.callisto-notprod.homeoffice.gov.uk/health
-    when:
-      event: 
-        - push
-      branch: 
-        - main
-    depends_on:      
-      - deploy to test
+      - check dev up
 
   - name: check test up
     pull: if-not-exists        
@@ -143,4 +143,4 @@ steps:
       branch: 
         - main
     depends_on:      
-      - check dev up      
+      - deploy to test      
