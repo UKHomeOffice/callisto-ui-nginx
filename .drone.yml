@@ -73,7 +73,7 @@ deploy: &deploy
   image: pelotech/drone-helm3
   settings:
     mode: upgrade
-    chart: ./helm    
+    chart: ./helm
     release: callisto-ui-nginx
     kube_certificate:
       from_secret: notprod_kube_certificate
@@ -115,7 +115,7 @@ steps:
         - push
       branch: 
         - main
-    depends_on:      
+    depends_on:
       - deploy to dev
 
   - name: check dev up
