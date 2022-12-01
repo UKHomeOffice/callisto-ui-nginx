@@ -120,10 +120,10 @@ steps:
   - name: deploy to test
     <<: *deploy
     settings:
-       values_file: ./helm/values/test-values.yaml
-       namespace: callisto-test
-       kube_token:
-         from_secret: test_kube_token
+      values_file: ./helm/values/test-values.yaml
+      namespace: callisto-test
+      kube_token:
+        from_secret: test_kube_token
     when:
       event: 
         - push
