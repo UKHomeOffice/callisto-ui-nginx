@@ -124,11 +124,11 @@ steps:
     commands: 
     - chmod +x ./scripts/is-url-up.sh
     - ./scripts/is-url-up.sh https://web.dev.callisto-notprod.homeoffice.gov.uk/health
-    # when:
-    #   event: 
-    #     - push
-    #   branch: 
-    #     - main
+    when:
+      event: 
+        - push
+      branch: 
+        - main
     depends_on:      
       - deploy to test
 
@@ -137,10 +137,10 @@ steps:
     image: *alpine_curl_image
     commands:    
     - ./scripts/is-url-up.sh https://web.test.callisto-notprod.homeoffice.gov.uk/health
-    # when:
-    #   event: 
-    #     - push
-    #   branch: 
-    #     - main
+    when:
+      event: 
+        - push
+      branch: 
+        - main
     depends_on:      
       - check dev up      
