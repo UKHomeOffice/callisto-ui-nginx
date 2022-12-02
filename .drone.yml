@@ -175,7 +175,7 @@ steps:
     settings:
       template: |
         {{#success build.status}}
-          Build #{{ build.number }} succeeded{{#equal build.branch "EAHW-2429/add-notifications"}} and deployed to Dev and Test{{/equal}}! :tada:
+          Build #{{ build.number }} succeeded{{#equal build.branch "main"}} and deployed to Dev and Test{{/equal}}! :tada:
         {{else}}
           Build #{{ build.number }} failed :alert:
         {{/success}}
@@ -197,6 +197,6 @@ steps:
         {{else}}
           :zombie: *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.          
         {{/success}}       
-    # when:
-    #   event:
-    #     - promote        
+    when:
+      event:
+        - promote        
