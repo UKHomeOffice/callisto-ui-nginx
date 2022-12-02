@@ -93,8 +93,7 @@ steps:
   - name: deploy to dev
     <<: *deploy
     settings:
-      values_files: 
-        - ./helm/values/dev-values.yaml
+      values_file: ./helm/values/dev-values.yaml
       namespace: callisto-dev
       kube_token:
         from_secret: dev_kube_token
