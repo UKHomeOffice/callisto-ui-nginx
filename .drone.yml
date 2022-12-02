@@ -93,15 +93,17 @@ steps:
   - name: deploy to dev
     <<: *deploy
     settings:
-      values_file: ./helm/values/dev-values.yaml
+      values_files: 
+        - ./helm/values/dev-values.yaml
       namespace: callisto-dev
       kube_token:
         from_secret: dev_kube_token
-    when:
-      event: 
-        - push
-      branch: 
-        - main
+      dry_run: true
+    # when:
+    #   event: 
+    #     - push
+    #   branch: 
+    #     - main
 
   - name: check dev up
     pull: if-not-exists        
@@ -120,7 +122,8 @@ steps:
   - name: deploy to test
     <<: *deploy
     settings:
-      values_file: ./helm/values/test-values.yaml
+      values_files: 
+        - ./helm/values/test-values.yaml
       namespace: callisto-test
       kube_token:
         from_secret: test_kube_token
