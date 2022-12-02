@@ -97,7 +97,7 @@ steps:
         - ./helm/values/dev-values.yaml
       namespace: callisto-dev
       kube_token:
-        from_secret: dev_kube_token      
+        from_secret: dev_kube_token
     when:
       event: 
         - push
