@@ -87,7 +87,7 @@ steps:
       mode: lint
       chart: ./helm
       values_files: 
-        - ./helm/values/chickenlips-values.yaml
+        - ./helm/values/dev-values.yaml
         - ./helm/values/test-values.yaml
 
   - name: deploy to dev
