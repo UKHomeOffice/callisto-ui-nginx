@@ -237,7 +237,7 @@ steps:
     pull: if-not-exists        
     image: *alpine_curl_image
     commands:    
-    - ./scripts/is-url-up.sh https://web.callisto-notprod.homeoffice.gov.uk/health
+    - ./scripts/is-url-up.sh https://web.callisto.homeoffice.gov.uk/health
     depends_on:      
       - deploy to prod  
 
