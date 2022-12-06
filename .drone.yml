@@ -10,6 +10,11 @@ platform:
 environment:
   VERSION: latest-20220916
 
+trigger:
+  event:
+    exclude:
+      - promote  
+
 steps:
 - name: lint_dockerfile
   pull: if-not-exists
@@ -68,6 +73,10 @@ platform:
   os: linux
   arch: amd64
 
+trigger:
+  event:
+    exclude:
+      - promote
 
 deploy: &deploy
   image: pelotech/drone-helm3
