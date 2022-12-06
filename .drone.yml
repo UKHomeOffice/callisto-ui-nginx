@@ -236,7 +236,7 @@ steps:
 
   - name: check prod up
     pull: if-not-exists        
-    image: *alpine_curl_image
+    image: alpine/curl:3.14
     commands:    
     - ./scripts/is-url-up.sh https://web.callisto.homeoffice.gov.uk/health
     depends_on:      
