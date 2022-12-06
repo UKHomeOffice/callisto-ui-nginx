@@ -186,9 +186,10 @@ steps:
   - name: successful build check
     pull: if-not-exists    
     image: drone/cli:1.6.2-alpine
-    DRONE_SERVER: https://drone-gh.acp.homeoffice.gov.uk
-    DRONE_TOKEN:
-      from_secret: drone_token        
+    environment:
+      DRONE_SERVER: https://drone-gh.acp.homeoffice.gov.uk
+      DRONE_TOKEN:
+        from_secret: drone_token        
     commands:
     - |        
       PAGE=1
