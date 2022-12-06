@@ -263,7 +263,8 @@ trigger:
 
 depends_on:
   - callisto-ui-nginx
-  - callisto-ui-nginx-deploy  
+  - callisto-ui-nginx-deploy
+  - callisto-ui-nginx-production-deploy 
 
 slack: &slack
   image: plugins/slack
