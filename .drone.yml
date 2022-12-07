@@ -111,8 +111,8 @@ steps:
     when:
       event: 
         - push
-      # branch: 
-      #   - main
+      branch: 
+        - main
 
   - name: check dev up
     pull: if-not-exists        
@@ -123,8 +123,8 @@ steps:
     when:
       event: 
         - push
-      # branch: 
-      #   - main
+      branch: 
+        - main
     depends_on:      
       - deploy to dev        
 
