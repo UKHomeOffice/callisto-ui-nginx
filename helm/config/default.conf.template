@@ -21,10 +21,12 @@ map $S3_STYLE $s3_host_hdr {
 
 map $host $branch {
     ~^web.[^.]+.callisto(?:-notprod)?.homeoffice.gov.uk$ "main";
+    default "main";
 }
 
 map $host $subenv {
-    ~^[^.]+\.(?<p2>[^.]+)\.callisto(?:-notprod)?.homeoffice.gov.uk$ $p2;
+    ~^[^.]+\.(?<p2>[^.]+)\.callisto(?:-notprod)?.homeoffice.gov.uk$ "/$p2";     
+    default "";    
 }
 
 js_var $indexIsEmpty true;
@@ -79,7 +81,7 @@ server {
     }
 
     location / {
-        set $uri_path       "/$subenv/$branch$uri_path"; 
+        set $uri_path       "$subenv/$branch$uri_path"; 
 
         auth_request /aws/credentials/retrieve;
 

@@ -54,7 +54,7 @@ location / {
 5. Run the image with the mounted files as below: 
 
 ```
-docker run -v $(PWD)/default.conf.templates:/etc/nginx/templates/default.conf.templates -v $(PWD)/nginx.conf:/etc/nginx/nginx.conf --env-file ./settings --publish 3000:3000 --name nginx-s3-gateway
+docker run -v $(PWD)/helm/config/default.conf.templates:/etc/nginx/templates/default.conf.templates -v $(PWD)/nginx.conf:/etc/nginx/nginx.conf --env-file ./settings --publish 3000:3000 --name nginx-s3-gateway
 ```
 
 6. Navigate to http://localhost:3000
