@@ -119,13 +119,13 @@ steps:
     image: &alpine_curl_image alpine/curl:3.14
     commands:    
     - ./scripts/is-url-up.sh https://web.dev.callisto-notprod.homeoffice.gov.uk/health
-    # when:
-    #   event: 
-    #     - push
-    #   branch: 
-    #     - main
-    # depends_on:      
-    #   - deploy to dev        
+    when:
+      event: 
+        - push
+      branch: 
+        - main
+    depends_on:      
+      - deploy to dev        
 
   - name: deploy to test
     <<: *deploy
