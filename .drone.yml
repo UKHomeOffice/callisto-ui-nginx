@@ -117,8 +117,7 @@ steps:
   - name: check dev up
     pull: if-not-exists        
     image: &alpine_curl_image alpine/curl:3.14
-    commands: 
-    - chmod +x ./scripts/is-url-up.sh
+    commands:    
     - ./scripts/is-url-up.sh https://web.dev.callisto-notprod.homeoffice.gov.uk/health
     when:
       event: 
