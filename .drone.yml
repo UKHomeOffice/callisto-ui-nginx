@@ -274,9 +274,9 @@ steps:
     settings:
       template: |
         {{#success build.status}}
-          Build #{{ build.number }} succeeded{{#equal build.branch "main"}} and deployed to Dev and Test{{/equal}}! :tada:
+          <${DRONE_BUILD_LINK}|Build #{{build.number}}> succeeded{{#equal build.branch "main"}} and deployed to Dev and Test{{/equal}}! :tada:
         {{else}}
-          Build #{{ build.number }} failed :alert:
+          <${DRONE_BUILD_LINK}|Build #{{build.number}}> failed :broken_heart:
         {{/success}}
         Commit: <${DRONE_REPO_LINK}/commit/{{ build.commit }}|{{ truncate build.commit 8 }}> - {{{ trim build.message }}}
         Repo: {{ repo.name }}
@@ -292,10 +292,55 @@ steps:
     settings:
       template: >
         {{#success build.status}}
-          :rocket: Successful *{{uppercasefirst build.deployTo}}* deployment for *{{repo.name}} build #{{build.number}}*.          
+          :rocket: Successful *{{uppercasefirst build.deployTo}}* deployment for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.          
         {{else}}
           :zombie: *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.          
         {{/success}}       
     when:
       event:
-        - promote        
+        - promote
+
+---
+kind: pipeline
+type: kubernetes
+name: urgent notifications
+
+trigger:
+  status:
+    - failure
+    - success
+
+depends_on:
+  - callisto-ui-nginx
+  - callisto-ui-nginx-deploy
+  - callisto-ui-nginx-production-deploy
+
+slack: &slack
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: slack_urgent_webhook_url
+    channel: callisto-urgent-tech-notifications
+    username: Drone
+
+steps:
+  - name: slack_build_urgent
+    <<: *slack
+    settings:
+      template: |
+        <${DRONE_BUILD_LINK}|Build #{{build.number}}> failed :this-is-fine-fire:
+        Commit: <${DRONE_REPO_LINK}/commit/{{ build.commit }}|{{ truncate build.commit 8 }}> - {{{ trim build.message }}}
+        Repo: {{ repo.name }}
+        Author: {{ build.author }}
+    when:
+      branch:
+        - eahw-2347/urgent-slack-alerts
+
+  - name: slack_deploy_urgent
+    <<: *slack
+    settings:
+      template: |
+        :alert: Problem *{{uppercasefirst build.deployTo}}* deployment failed for *{{repo.name}}* <${DRONE_BUILD_LINK}| build #{{build.number}}>.
+    when:
+      event:
+        - promote
