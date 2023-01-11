@@ -303,7 +303,7 @@ steps:
 ---
 kind: pipeline
 type: kubernetes
-name: urgent notifications
+name: urgent-callisto-ui-nginx-notifications
 
 trigger:
   status:
