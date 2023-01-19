@@ -21,6 +21,7 @@ map $S3_STYLE $s3_host_hdr {
 
 map $host $branch {
     ~^web.[^.]+.callisto(?:-notprod)?.homeoffice.gov.uk$ "main";
+    ~^(?<p1>[^.]+)-web.[^.]+.callisto(?:-notprod)?.homeoffice.gov.uk$ "$p1"
     default "main";
 }
 
