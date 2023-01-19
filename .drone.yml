@@ -70,14 +70,10 @@ steps:
       from_secret: quay_robot_token
     tags:
     - latest
-    #- ${DRONE_TAG}
-    - ${DRONE_COMMIT_SHA}
+    - ${DRONE_TAG}
   when:
     event:
-      #- tag # unomment that
-      - push # remove it for PR
-    branch:
-      - eahw-2547-moving-images-to-quay
+      - tag
 
 
 services:
