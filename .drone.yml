@@ -58,6 +58,27 @@ steps:
     event:
     - tag
 
+- name: build_tag_push_quay
+  pull: if-not-exists
+  image: plugins/docker
+  settings:
+    registry: quay.io
+    repo: quay.io/ukhomeofficedigital/callisto-nginx-s3-gateway
+    username:
+      from_secret: quay_robot_name
+    password:
+      from_secret: quay_robot_token
+    tags:
+    - latest
+    - ${DRONE_TAG}
+  when:
+    event:
+      - tag
+      - push # remove it for PR
+    branch:
+      - eahw-2547-moving-images-to-quay
+
+
 services:
 - name: docker
   image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
