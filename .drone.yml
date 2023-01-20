@@ -51,12 +51,10 @@ steps:
       from_secret: quay_robot_token
     tags:
     - latest
-    - test
+    - ${DRONE_TAG}
   when:
     event:
-      - push
-    branch:
-      - eahw-2547-moving-images-to-quay
+      - tag
 
 
 services:
