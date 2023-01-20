@@ -51,7 +51,7 @@ steps:
       from_secret: quay_robot_token
     tags:
     - latest
-    - ${DRONE_TAG}
+    - test
   when:
     event:
       - push
