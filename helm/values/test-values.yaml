@@ -7,8 +7,8 @@ service:
 replicaCount: 1
 
 image:
-  repo: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/callisto/
-  name: nginx-s3-gateway
+  repo: quay.io/ukhomeofficedigital/
+  name: callisto-nginx-s3-gateway
   version: latest
 
 nginxs3proxy:

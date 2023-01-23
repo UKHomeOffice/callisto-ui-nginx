@@ -39,24 +39,23 @@ steps:
     event:
     - push
 
-- name: build_tag_push_ecr
+- name: build_tag_push_quay
   pull: if-not-exists
-  image: plugins/ecr
-  environment:
-    AWS_REGION: eu-west-2
+  image: plugins/docker
   settings:
-    access_key:
-      from_secret: AWS_ACCESS_KEY_ID
-    secret_key:
-      from_secret: AWS_SECRET_ACCESS_KEY
-    repo: callisto/nginx-s3-gateway
-    registry: 340268328991.dkr.ecr.eu-west-2.amazonaws.com
+    registry: quay.io
+    repo: quay.io/ukhomeofficedigital/callisto-nginx-s3-gateway
+    username:
+      from_secret: quay_robot_name
+    password:
+      from_secret: quay_robot_token
     tags:
     - latest
     - ${DRONE_TAG}
   when:
     event:
-    - tag
+      - tag
+
 
 services:
 - name: docker
