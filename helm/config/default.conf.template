@@ -81,6 +81,17 @@ server {
         return 200;
     }
 
+    location ~* "/(?!(assets/|silent-check-sso))" {
+        set $uri_path       "$subenv/$branch/"; 
+
+        auth_request /aws/credentials/retrieve;
+
+        # Redirect to the proper location based on the client request - either
+        # @s3, @s3Listing or @error405.
+
+        js_content s3gateway.redirectToS3;
+    }
+
     location / {
         set $uri_path       "$subenv/$branch$uri_path"; 
 
