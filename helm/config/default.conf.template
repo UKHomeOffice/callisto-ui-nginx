@@ -27,7 +27,7 @@ map $host $branch {
 
 map $host $subenv {
     ~^[^.]+\.(?<p2>[^.]+)\.callisto(?:-notprod)?.homeoffice.gov.uk$ "/$p2";     
-    default "";    
+    default "${S3_ENV_DEFAULT}";    
 }
 
 js_var $indexIsEmpty true;
@@ -81,8 +81,8 @@ server {
         return 200;
     }
 
-    location ~* "/(?!(assets/|silent-check-sso))" {
-        set $uri_path       "$subenv/$branch/"; 
+    location ~* ^/(?!(aws/|assets/|silent-check-sso|index.html$)) {
+        set $uri_path       "$subenv/$branch/index.html"; 
 
         auth_request /aws/credentials/retrieve;
 
