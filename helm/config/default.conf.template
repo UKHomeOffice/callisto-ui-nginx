@@ -81,7 +81,7 @@ server {
         return 200;
     }
 
-    location ~* ^/(?!(aws/|assets/|silent-check-sso|index.html$)) {
+    location ~* ^/(?!(aws/|static/|assets/|silent-check-sso|index.html$)) {
         set $uri_path       "$subenv/$branch/index.html"; 
 
         auth_request /aws/credentials/retrieve;
