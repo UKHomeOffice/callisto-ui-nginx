@@ -211,10 +211,17 @@ name: callisto-ui-nginx-production-deploy
 platform:
   os: linux
   arch: amd64
-
+  
 trigger:
   event:
     - promote
+  target:
+    exclude:
+    - production
+#To reinstate prod deployment change the trigger to:
+#trigger:
+#  event:
+#    - promote
 
 depends_on:
   - callisto-ui-nginx-promotion-checks
