@@ -75,7 +75,16 @@ platform:
 trigger:
   event:
     exclude:
+      - push
+      - pull_request
+      - tag
       - promote
+      - rollback
+  #to reinstate test deploy on pull requests change trigger to
+  #trigger:
+  # event:
+  #    exclude:
+  #      - promote
 
 deploy: &deploy
   image: pelotech/drone-helm3
